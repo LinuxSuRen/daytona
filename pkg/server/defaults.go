@@ -100,7 +100,7 @@ func getDefaultConfig() (*Config, error) {
 	}
 
 	c := Config{
-		Id:                       generateUuid(),
+		Id:                       uuid.NewString(),
 		RegistryUrl:              defaultRegistryUrl,
 		ProvidersDir:             providersDir,
 		ServerDownloadUrl:        defaultServerDownloadUrl,
@@ -186,9 +186,4 @@ func getDefaultBinariesPath() (string, error) {
 	}
 
 	return filepath.Join(configDir, "binaries"), nil
-}
-
-func generateUuid() string {
-	uuid := uuid.New()
-	return uuid.String()
 }
