@@ -63,13 +63,11 @@ func GetDefaultProjectConfig(ctx *gin.Context) {
 
 	projectConfigs, err := server.ProjectConfigService.FindDefault(decodedURLParam)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to find project config by git url: %s", err.Error()))
-		return
-	}
-
-	if config.IsProjectConfigNotFound(err) {
-		ctx.Status(404)
-		return
+		statusCode := http.StatusInternalServerError
+		if config.IsProjectConfigNotFound(err) {
+			statusCode = http.StatusNotFound
+		}
+		ctx.AbortWithError(statusCode, fmt.Errorf("failed to find project config by git url: %s", err.Error()))
 	}
 
 	ctx.JSON(200, projectConfigs)
@@ -130,8 +128,6 @@ func SetProjectConfig(ctx *gin.Context) {
 	if req.User != nil {
 		projectConfig.User = *req.User
 	}
-
-	fmt.Println(projectConfig)
 
 	s := server.GetInstance(nil)
 	err = s.ProjectConfigService.Save(&projectConfig)

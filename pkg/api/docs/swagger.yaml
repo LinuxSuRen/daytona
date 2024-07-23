@@ -908,7 +908,7 @@ paths:
       summary: Get project config data
       tags:
       - project-config
-  /project-config/{gitUrl}:
+  /project-config/default/{gitUrl}:
     get:
       description: Get project configs by git url
       operationId: GetDefaultProjectConfig

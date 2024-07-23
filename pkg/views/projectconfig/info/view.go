@@ -10,6 +10,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/daytonaio/daytona/pkg/apiclient"
 	"github.com/daytonaio/daytona/pkg/views"
+	"github.com/daytonaio/daytona/pkg/views/workspace/create"
 	"golang.org/x/term"
 )
 
@@ -22,7 +23,7 @@ var propertyValueStyle = lipgloss.NewStyle().
 	Foreground(views.Light).
 	Bold(true)
 
-func Render(projectConfig *apiclient.ProjectConfig, forceUnstyled bool) {
+func Render(projectConfig *apiclient.ProjectConfig, apiServerConfig *apiclient.ServerConfig, forceUnstyled bool) {
 	var output string
 	output += "\n\n"
 
@@ -35,7 +36,16 @@ func Render(projectConfig *apiclient.ProjectConfig, forceUnstyled bool) {
 	}
 
 	if GetLabelFromBuild(projectConfig.Build) != "" {
-		output += getInfoLine("Build", GetLabelFromBuild(projectConfig.Build)) + "\n"
+		projectDefaults := &create.ProjectDefaults{
+			Image:     apiServerConfig.DefaultProjectImage,
+			ImageUser: apiServerConfig.DefaultProjectUser,
+		}
+
+		createProjectConfigDTO := apiclient.CreateProjectConfigDTO{
+			Build: projectConfig.Build,
+		}
+		_, buildChoice := create.GetProjectBuildChoice(createProjectConfigDTO, projectDefaults)
+		output += getInfoLine("Build", buildChoice) + "\n"
 	}
 
 	if projectConfig.Image != nil && *projectConfig.Image != "" {
@@ -44,6 +54,10 @@ func Render(projectConfig *apiclient.ProjectConfig, forceUnstyled bool) {
 
 	if projectConfig.User != nil && *projectConfig.User != "" {
 		output += getInfoLine("User", *projectConfig.User) + "\n"
+	}
+
+	if projectConfig.Build != nil && projectConfig.Build.Devcontainer != nil && projectConfig.Build.Devcontainer.DevContainerFilePath != nil {
+		output += getInfoLine("Devcontainer path", *projectConfig.Build.Devcontainer.DevContainerFilePath) + "\n"
 	}
 
 	terminalWidth, _, err := term.GetSize(int(os.Stdout.Fd()))

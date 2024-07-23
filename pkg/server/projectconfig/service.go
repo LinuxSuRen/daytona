@@ -107,6 +107,10 @@ func (s *ProjectConfigService) SetDefault(projectConfigName string) error {
 		} else {
 			pc.IsDefault = false
 		}
+		err := s.configStore.Save(pc)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -117,7 +121,12 @@ func (s *ProjectConfigService) Find(projectConfigName string) (*config.ProjectCo
 }
 
 func (s *ProjectConfigService) Save(projectConfig *config.ProjectConfig) error {
-	return s.configStore.Save(projectConfig)
+	err := s.configStore.Save(projectConfig)
+	if err != nil {
+		return err
+	}
+
+	return s.SetDefault(projectConfig.Name)
 }
 
 func (s *ProjectConfigService) Delete(projectConfig *config.ProjectConfig) error {

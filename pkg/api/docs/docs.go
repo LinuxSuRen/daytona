@@ -645,6 +645,36 @@ const docTemplate = `{
                 }
             }
         },
+        "/project-config/default/{gitUrl}": {
+            "get": {
+                "description": "Get project configs by git url",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "project-config"
+                ],
+                "summary": "Get project configs by git url",
+                "operationId": "GetDefaultProjectConfig",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Git URL",
+                        "name": "gitUrl",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ProjectConfig"
+                        }
+                    }
+                }
+            }
+        },
         "/project-config/{configName}": {
             "get": {
                 "description": "Get project config data",
@@ -693,36 +723,6 @@ const docTemplate = `{
                 "responses": {
                     "204": {
                         "description": "No Content"
-                    }
-                }
-            }
-        },
-        "/project-config/{gitUrl}": {
-            "get": {
-                "description": "Get project configs by git url",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "project-config"
-                ],
-                "summary": "Get project configs by git url",
-                "operationId": "GetDefaultProjectConfig",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Git URL",
-                        "name": "gitUrl",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ProjectConfig"
-                        }
                     }
                 }
             }

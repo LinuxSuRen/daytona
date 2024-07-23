@@ -7,7 +7,9 @@ import (
 	"context"
 
 	apiclient_util "github.com/daytonaio/daytona/internal/util/apiclient"
+	"github.com/daytonaio/daytona/pkg/apiclient"
 	"github.com/daytonaio/daytona/pkg/views"
+	"github.com/daytonaio/daytona/pkg/views/workspace/selection"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -18,8 +20,8 @@ var projectConfigDeleteCmd = &cobra.Command{
 	Short:   "Delete a project config",
 	Args:    cobra.RangeArgs(0, 2),
 	Run: func(cmd *cobra.Command, args []string) {
-		// var registryDto *apiclient.ProjectConfig
-		// var selectedServer string
+		var selectedProjectConfig *apiclient.ProjectConfig
+		var selectedProjectConfigName string
 
 		apiClient, err := apiclient_util.GetApiClient(nil)
 		if err != nil {
@@ -27,40 +29,26 @@ var projectConfigDeleteCmd = &cobra.Command{
 		}
 
 		if len(args) == 0 {
-			// c, err := config.GetConfig()
-			// if err != nil {
-			// 	log.Fatal(err)
-			// }
-
-			// activeProfile, err := c.GetActiveProfile()
-			// if err != nil {
-			// 	log.Fatal(err)
-			// }
-
-			containerRegistries, res, err := apiClient.ProjectConfigAPI.ListProjectConfigs(context.Background()).Execute()
+			projectConfigs, res, err := apiClient.ProjectConfigAPI.ListProjectConfigs(context.Background()).Execute()
 			if err != nil {
 				log.Fatal(apiclient_util.HandleErrorResponse(res, err))
 			}
 
-			if len(containerRegistries) == 0 {
-				views.RenderInfoMessage("No container registries found")
+			if len(projectConfigs) == 0 {
+				views.RenderInfoMessage("No project configs found")
 				return
 			}
 
-			// registryDto, err = projectconfig_view.GetRegistryFromPrompt(containerRegistries, activeProfile.Name, false)
-			// if err != nil {
-			// 	log.Fatal(err)
-			// }
-
-			// selectedServer = *registryDto.Server
+			selectedProjectConfig = selection.GetProjectConfigFromPrompt(projectConfigs, false, "Delete")
+			selectedProjectConfigName = *selectedProjectConfig.Name
 		} else {
-			// selectedServer = args[0]
+			selectedProjectConfigName = args[0]
 		}
 
-		// res, err := apiClient.ProjectConfigAPI.RemoveProjectConfig(context.Background(), url.QueryEscape(selectedServer)).Execute()
-		// if err != nil {
-		// 	log.Fatal(apiclient_util.HandleErrorResponse(res, err))
-		// }
+		res, err := apiClient.ProjectConfigAPI.DeleteProjectConfig(context.Background(), selectedProjectConfigName).Execute()
+		if err != nil {
+			log.Fatal(apiclient_util.HandleErrorResponse(res, err))
+		}
 
 		views.RenderInfoMessage("Project config deleted successfully")
 	},

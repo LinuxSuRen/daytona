@@ -6,7 +6,6 @@ package projectconfig
 import (
 	"context"
 
-	"github.com/daytonaio/daytona/internal/util/apiclient"
 	apiclient_util "github.com/daytonaio/daytona/internal/util/apiclient"
 	"github.com/daytonaio/daytona/pkg/cmd/output"
 	"github.com/daytonaio/daytona/pkg/views"
@@ -31,16 +30,21 @@ var projectConfigListCmd = &cobra.Command{
 
 		gitProviders, res, err := apiClient.GitProviderAPI.ListGitProviders(ctx).Execute()
 		if err != nil {
-			log.Fatal(apiclient.HandleErrorResponse(res, err))
+			log.Fatal(apiclient_util.HandleErrorResponse(res, err))
 		}
 
 		if len(gitProviders) > 1 {
 			specifyGitProviders = true
 		}
 
+		apiServerConfig, res, err := apiClient.ServerAPI.GetConfig(context.Background()).Execute()
+		if err != nil {
+			log.Fatal(apiclient_util.HandleErrorResponse(res, err))
+		}
+
 		projectConfigs, res, err := apiClient.ProjectConfigAPI.ListProjectConfigs(context.Background()).Execute()
 		if err != nil {
-			log.Fatal(apiclient.HandleErrorResponse(res, err))
+			log.Fatal(apiclient_util.HandleErrorResponse(res, err))
 		}
 
 		if len(projectConfigs) == 0 {
@@ -53,6 +57,6 @@ var projectConfigListCmd = &cobra.Command{
 			return
 		}
 
-		projectconfig_view.ListProjectConfigs(projectConfigs, specifyGitProviders)
+		projectconfig_view.ListProjectConfigs(projectConfigs, apiServerConfig, specifyGitProviders)
 	},
 }

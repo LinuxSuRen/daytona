@@ -46,8 +46,14 @@ func (s *WorkspaceService) CreateWorkspace(req dto.CreateWorkspaceDTO) (*workspa
 	w.Projects = []*project.Project{}
 
 	for _, p := range req.Projects {
+		var projectConfig *config.ProjectConfig
 		if p.NewProjectConfig == nil && p.ExistingProjectConfig == nil {
 			return nil, ErrInvalidProjectConfig
+		}
+
+		if p.NewProjectConfig != nil {
+			// todo: make util that turns create project config into project config
+			fmt.Println(projectConfig)
 		}
 
 		isValidProjectName := regexp.MustCompile(`^[a-zA-Z0-9-_.]+$`).MatchString

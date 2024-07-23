@@ -13,6 +13,7 @@ import (
 	"github.com/daytonaio/daytona/pkg/apiclient"
 	"github.com/daytonaio/daytona/pkg/views"
 	views_util "github.com/daytonaio/daytona/pkg/views/util"
+	"github.com/daytonaio/daytona/pkg/views/workspace/create"
 	"golang.org/x/term"
 )
 
@@ -20,12 +21,13 @@ type RowData struct {
 	Name       string
 	Repository string
 	Build      string
+	IsDefault  string
 }
 
-func ListProjectConfigs(projectConfigList []apiclient.ProjectConfig, specifyGitProviders bool) {
+func ListProjectConfigs(projectConfigList []apiclient.ProjectConfig, apiServerConfig *apiclient.ServerConfig, specifyGitProviders bool) {
 	re := lipgloss.NewRenderer(os.Stdout)
 
-	headers := []string{"Name", "Repository", "Build"}
+	headers := []string{"Name", "Repository", "Build", "Default"}
 
 	data := [][]string{}
 
@@ -33,7 +35,7 @@ func ListProjectConfigs(projectConfigList []apiclient.ProjectConfig, specifyGitP
 		var rowData *RowData
 		var row []string
 
-		rowData = getTableRowData(pc, specifyGitProviders)
+		rowData = getTableRowData(pc, apiServerConfig, specifyGitProviders)
 		row = getRowFromRowData(*rowData)
 		data = append(data, row)
 	}
@@ -81,21 +83,45 @@ func renderUnstyledList(projectConfigList []apiclient.ProjectConfig) {
 }
 
 func getRowFromRowData(rowData RowData) []string {
+	var isDefault string
+
+	if rowData.IsDefault == "" {
+		isDefault = views.InactiveStyle.Render("/")
+	} else {
+		isDefault = views.ActiveStyle.Render("Yes")
+	}
+
 	row := []string{
 		views.NameStyle.Render(rowData.Name),
 		views.DefaultRowDataStyle.Render(rowData.Repository),
 		views.DefaultRowDataStyle.Render(rowData.Build),
+		isDefault,
 	}
 
 	return row
 }
 
-func getTableRowData(projectConfig apiclient.ProjectConfig, specifyGitProviders bool) *RowData {
-	rowData := RowData{"", "", ""}
+func getTableRowData(projectConfig apiclient.ProjectConfig, apiServerConfig *apiclient.ServerConfig, specifyGitProviders bool) *RowData {
+	rowData := RowData{"", "", "", ""}
 
 	rowData.Name = *projectConfig.Name + views_util.AdditionalPropertyPadding
 	rowData.Repository = util.GetRepositorySlugFromUrl(*projectConfig.Repository.Url, specifyGitProviders)
-	rowData.Build = ""
+	rowData.IsDefault = ""
+
+	projectDefaults := &create.ProjectDefaults{
+		Image:     apiServerConfig.DefaultProjectImage,
+		ImageUser: apiServerConfig.DefaultProjectUser,
+	}
+
+	createProjectConfigDTO := apiclient.CreateProjectConfigDTO{
+		Build: projectConfig.Build,
+	}
+
+	_, rowData.Build = create.GetProjectBuildChoice(createProjectConfigDTO, projectDefaults)
+
+	if *projectConfig.Default {
+		rowData.IsDefault = "1"
+	}
 
 	return &rowData
 }

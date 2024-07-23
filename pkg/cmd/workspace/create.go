@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"net/url"
 	"time"
 
@@ -327,7 +328,7 @@ func processPrompting(apiClient *apiclient.APIClient, workspaceName *string, pro
 	suggestedName := workspace_util.GetSuggestedName(initialSuggestion, workspaceNames)
 
 	submissionFormConfig := create.SubmissionFormConfig{
-		Name:          workspaceName,
+		FlagName:      workspaceName,
 		SuggestedName: suggestedName,
 		ExistingNames: workspaceNames,
 		ProjectList:   projects,
@@ -359,18 +360,20 @@ func processCmdArguments(args []string, apiClient *apiclient.APIClient, projects
 
 	if !blankFlag {
 		projectConfig, res, err := apiClient.ProjectConfigAPI.GetDefaultProjectConfig(ctx, encodedURLParam).Execute()
-		if err != nil {
-			return apiclient_util.HandleErrorResponse(res, err)
+		if err == nil {
+			project := &apiclient.CreateProjectDTO{
+				ExistingProjectConfig: &apiclient.ExistingProjectConfigDTO{
+					ConfigName:  projectConfig.Name,
+					ProjectName: projectConfig.Name,
+				},
+			}
+			*projects = append(*projects, *project)
+			return nil
 		}
 
-		project := &apiclient.CreateProjectDTO{
-			ExistingProjectConfig: &apiclient.ExistingProjectConfigDTO{
-				ConfigName:  projectConfig.Name,
-				ProjectName: projectConfig.Name,
-			},
+		if res.StatusCode != http.StatusNotFound {
+			return apiclient_util.HandleErrorResponse(res, err)
 		}
-		*projects = append(*projects, *project)
-		return nil
 	}
 
 	repoResponse, res, err := apiClient.GitProviderAPI.GetGitContext(ctx, encodedURLParam).Execute()

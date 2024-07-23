@@ -29,6 +29,11 @@ var projectConfigInfoCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
+		apiServerConfig, res, err := apiClient.ServerAPI.GetConfig(context.Background()).Execute()
+		if err != nil {
+			log.Fatal(apiclient_util.HandleErrorResponse(res, err))
+		}
+
 		var projectConfig *apiclient.ProjectConfig
 
 		if len(args) == 0 {
@@ -37,7 +42,7 @@ var projectConfigInfoCmd = &cobra.Command{
 				log.Fatal(apiclient_util.HandleErrorResponse(res, err))
 			}
 
-			projectConfig = selection.GetProjectConfigFromPrompt(projectConfigList, "View")
+			projectConfig = selection.GetProjectConfigFromPrompt(projectConfigList, false, "View")
 		} else {
 			var res *http.Response
 			projectConfig, res, err = apiClient.ProjectConfigAPI.GetProjectConfig(ctx, args[0]).Execute()
@@ -55,7 +60,7 @@ var projectConfigInfoCmd = &cobra.Command{
 			return
 		}
 
-		info.Render(projectConfig, false)
+		info.Render(projectConfig, apiServerConfig, false)
 	},
 }
 

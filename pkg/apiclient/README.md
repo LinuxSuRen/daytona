@@ -98,7 +98,7 @@ Class | Method | HTTP request | Description
 *ProfileAPI* | [**GetProfileData**](docs/ProfileAPI.md#getprofiledata) | **Get** /profile | Get profile data
 *ProfileAPI* | [**SetProfileData**](docs/ProfileAPI.md#setprofiledata) | **Put** /profile | Set profile data
 *ProjectConfigAPI* | [**DeleteProjectConfig**](docs/ProjectConfigAPI.md#deleteprojectconfig) | **Delete** /project-config/{configName} | Delete project config data
-*ProjectConfigAPI* | [**GetDefaultProjectConfig**](docs/ProjectConfigAPI.md#getdefaultprojectconfig) | **Get** /project-config/{gitUrl} | Get project configs by git url
+*ProjectConfigAPI* | [**GetDefaultProjectConfig**](docs/ProjectConfigAPI.md#getdefaultprojectconfig) | **Get** /project-config/default/{gitUrl} | Get project configs by git url
 *ProjectConfigAPI* | [**GetProjectConfig**](docs/ProjectConfigAPI.md#getprojectconfig) | **Get** /project-config/{configName} | Get project config data
 *ProjectConfigAPI* | [**ListProjectConfigs**](docs/ProjectConfigAPI.md#listprojectconfigs) | **Get** /project-config | List project configs
 *ProjectConfigAPI* | [**SetProjectConfig**](docs/ProjectConfigAPI.md#setprojectconfig) | **Put** /project-config | Set project config data

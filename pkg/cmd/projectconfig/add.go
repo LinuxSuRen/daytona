@@ -89,9 +89,15 @@ var projectConfigAddCmd = &cobra.Command{
 			log.Fatal("project config name is required")
 		}
 
+		initialSuggestion := *projects[0].NewProjectConfig.Name
+
+		suggestedName := workspace_util.GetSuggestedName(initialSuggestion, existingProjectConfigNames)
+
+		flagName := ""
+
 		submissionFormConfig := create.SubmissionFormConfig{
-			Name:          projects[0].NewProjectConfig.Name,
-			SuggestedName: *projects[0].NewProjectConfig.Name,
+			FlagName:      &flagName,
+			SuggestedName: suggestedName,
 			ExistingNames: existingProjectConfigNames,
 			ProjectList:   &projects,
 			NameLabel:     "Project config name",

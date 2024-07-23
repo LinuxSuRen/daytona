@@ -171,7 +171,7 @@ func (a *ProjectConfigAPIService) GetDefaultProjectConfigExecute(r ApiGetDefault
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/project-config/{gitUrl}"
+	localVarPath := localBasePath + "/project-config/default/{gitUrl}"
 	localVarPath = strings.Replace(localVarPath, "{"+"gitUrl"+"}", url.PathEscape(parameterValueToString(r.gitUrl, "gitUrl")), -1)
 
 	localVarHeaderParams := make(map[string]string)

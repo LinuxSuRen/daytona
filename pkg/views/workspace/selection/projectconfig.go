@@ -17,13 +17,13 @@ import (
 
 var BlankProjectIdentifier = "<BLANK_PROJECT>"
 
-func GetProjectConfigFromPrompt(projectConfigs []apiclient.ProjectConfig, actionVerb string) *apiclient.ProjectConfig {
+func GetProjectConfigFromPrompt(projectConfigs []apiclient.ProjectConfig, showBlankOption bool, actionVerb string) *apiclient.ProjectConfig {
 	choiceChan := make(chan *apiclient.ProjectConfig)
-	go selectProjectConfigPrompt(projectConfigs, actionVerb, choiceChan)
+	go selectProjectConfigPrompt(projectConfigs, showBlankOption, actionVerb, choiceChan)
 	return <-choiceChan
 }
 
-func selectProjectConfigPrompt(projectConfigs []apiclient.ProjectConfig, actionVerb string, choiceChan chan<- *apiclient.ProjectConfig) {
+func selectProjectConfigPrompt(projectConfigs []apiclient.ProjectConfig, showBlankOption bool, actionVerb string, choiceChan chan<- *apiclient.ProjectConfig) {
 	items := []list.Item{}
 
 	for _, pc := range projectConfigs {
@@ -41,10 +41,12 @@ func selectProjectConfigPrompt(projectConfigs []apiclient.ProjectConfig, actionV
 		items = append(items, newItem)
 	}
 
-	newItem := item[apiclient.ProjectConfig]{title: "Make a blank project", desc: "(default project configuration)", choiceProperty: apiclient.ProjectConfig{
-		Name: &BlankProjectIdentifier,
-	}}
-	items = append(items, newItem)
+	if showBlankOption {
+		newItem := item[apiclient.ProjectConfig]{title: "Make a blank project", desc: "(default project configuration)", choiceProperty: apiclient.ProjectConfig{
+			Name: &BlankProjectIdentifier,
+		}}
+		items = append(items, newItem)
+	}
 
 	d := list.NewDefaultDelegate()
 

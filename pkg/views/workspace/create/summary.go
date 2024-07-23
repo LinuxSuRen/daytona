@@ -48,7 +48,7 @@ type SummaryModel struct {
 }
 
 type SubmissionFormConfig struct {
-	Name          *string
+	FlagName      *string
 	SuggestedName string
 	ExistingNames []string
 	ProjectList   *[]apiclient.CreateProjectDTO
@@ -113,7 +113,7 @@ func RenderSummary(name string, projectList []apiclient.CreateProjectDTO, defaul
 			output += fmt.Sprintf("%s - %s\n", lipgloss.NewStyle().Foreground(views.Green).Render(fmt.Sprintf("%s #%d", "Project", i+1)), (*projectList[i].NewProjectConfig.Source.Repository.Url))
 		}
 
-		projectBuildChoice, choiceName := getProjectBuildChoice(projectList[i], defaults)
+		projectBuildChoice, choiceName := GetProjectBuildChoice(*projectList[i].NewProjectConfig, defaults)
 		output += renderProjectDetails(projectList[i], projectBuildChoice, choiceName)
 		if i < len(projectList)-1 {
 			output += "\n\n"
@@ -170,39 +170,23 @@ func projectDetailOutput(projectDetailKey ProjectDetail, projectDetailValue stri
 	return fmt.Sprintf("\t%s%-*s%s", lipgloss.NewStyle().Foreground(views.Green).Render(string(projectDetailKey)), DEFAULT_PADDING-len(string(projectDetailKey)), EMPTY_STRING, projectDetailValue)
 }
 
-func getProjectBuildChoice(project apiclient.CreateProjectDTO, defaults *ProjectDefaults) (BuildChoice, string) {
-	if project.NewProjectConfig.Build == nil {
-		if *project.NewProjectConfig.Image == *defaults.Image && *project.NewProjectConfig.User == *defaults.ImageUser {
-			return NONE, "None"
-		} else {
-			return CUSTOMIMAGE, "Custom Image"
-		}
-	} else {
-		if project.NewProjectConfig.Build.Devcontainer != nil {
-			return DEVCONTAINER, "Devcontainer"
-		} else {
-			return AUTOMATIC, "Automatic"
-		}
-	}
-}
-
 func NewSummaryModel(config SubmissionFormConfig) SummaryModel {
 	m := SummaryModel{width: maxWidth}
 	m.lg = lipgloss.DefaultRenderer()
 	m.styles = NewStyles(m.lg)
-	m.name = *config.Name
+	m.name = *config.FlagName
 	m.projectList = *config.ProjectList
 	m.defaults = config.Defaults
 
-	if *config.Name == "" {
-		*config.Name = config.SuggestedName
+	if *config.FlagName == "" {
+		*config.FlagName = config.SuggestedName
 	}
 
 	m.form = huh.NewForm(
 		huh.NewGroup(
 			huh.NewInput().
 				Title(config.NameLabel).
-				Value(config.Name).
+				Value(config.FlagName).
 				Key("name").
 				Validate(func(str string) error {
 					result, err := util.GetValidatedWorkspaceName(str)
@@ -214,7 +198,7 @@ func NewSummaryModel(config SubmissionFormConfig) SummaryModel {
 							return errors.New("name already exists")
 						}
 					}
-					*config.Name = result
+					*config.FlagName = result
 					return nil
 				}),
 		),

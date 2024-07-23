@@ -45,7 +45,7 @@ func GetProjectsCreationDataFromPrompt(config ProjectsDataPromptConfig) ([]apicl
 	for i := 1; addMore || i == 1; i++ {
 
 		if len(config.ProjectConfigs) > 0 {
-			projectConfig := selection.GetProjectConfigFromPrompt(config.ProjectConfigs, "Use")
+			projectConfig := selection.GetProjectConfigFromPrompt(config.ProjectConfigs, true, "Use")
 			if projectConfig == nil {
 				return nil, fmt.Errorf("must select a project config")
 			}

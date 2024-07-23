@@ -5,7 +5,7 @@ All URIs are relative to *http://localhost:3986*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**DeleteProjectConfig**](ProjectConfigAPI.md#DeleteProjectConfig) | **Delete** /project-config/{configName} | Delete project config data
-[**GetDefaultProjectConfig**](ProjectConfigAPI.md#GetDefaultProjectConfig) | **Get** /project-config/{gitUrl} | Get project configs by git url
+[**GetDefaultProjectConfig**](ProjectConfigAPI.md#GetDefaultProjectConfig) | **Get** /project-config/default/{gitUrl} | Get project configs by git url
 [**GetProjectConfig**](ProjectConfigAPI.md#GetProjectConfig) | **Get** /project-config/{configName} | Get project config data
 [**ListProjectConfigs**](ProjectConfigAPI.md#ListProjectConfigs) | **Get** /project-config | List project configs
 [**SetProjectConfig**](ProjectConfigAPI.md#SetProjectConfig) | **Put** /project-config | Set project config data

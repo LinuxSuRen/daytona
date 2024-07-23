@@ -67,6 +67,7 @@ type ProjectConfigDTO struct {
 	User       string           `json:"user"`
 	Build      *ProjectBuildDTO `json:"build,omitempty" gorm:"serializer:json"`
 	Repository RepositoryDTO    `gorm:"serializer:json"`
+	IsDefault  bool             `json:"isDefault"`
 }
 
 func ToProjectDTO(project *project.Project, workspace *workspace.Workspace) ProjectDTO {
@@ -90,6 +91,7 @@ func ToProjectConfigDTO(projectConfig *config.ProjectConfig) ProjectConfigDTO {
 		User:       projectConfig.User,
 		Build:      ToProjectBuildDTO(projectConfig.Build),
 		Repository: ToRepositoryDTO(projectConfig.Repository),
+		IsDefault:  projectConfig.IsDefault,
 	}
 }
 
@@ -100,6 +102,7 @@ func ToProjectConfig(providerTargetDTO ProjectConfigDTO) *config.ProjectConfig {
 		User:       providerTargetDTO.User,
 		Build:      ToProjectBuild(providerTargetDTO.Build),
 		Repository: ToRepository(providerTargetDTO.Repository),
+		IsDefault:  providerTargetDTO.IsDefault,
 	}
 }
 
