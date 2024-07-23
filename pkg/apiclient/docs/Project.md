@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Build** | Pointer to [**ProjectBuild**](ProjectBuild.md) |  | [optional] 
+**Default** | Pointer to **bool** |  | [optional] 
 **Image** | Pointer to **string** |  | [optional] 
 **Name** | Pointer to **string** |  | [optional] 
 **Repository** | Pointer to [**GitRepository**](GitRepository.md) |  | [optional] 
@@ -56,6 +57,31 @@ SetBuild sets Build field to given value.
 `func (o *Project) HasBuild() bool`
 
 HasBuild returns a boolean if a field has been set.
+
+### GetDefault
+
+`func (o *Project) GetDefault() bool`
+
+GetDefault returns the Default field if non-nil, zero value otherwise.
+
+### GetDefaultOk
+
+`func (o *Project) GetDefaultOk() (*bool, bool)`
+
+GetDefaultOk returns a tuple with the Default field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDefault
+
+`func (o *Project) SetDefault(v bool)`
+
+SetDefault sets Default field to given value.
+
+### HasDefault
+
+`func (o *Project) HasDefault() bool`
+
+HasDefault returns a boolean if a field has been set.
 
 ### GetImage
 

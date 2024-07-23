@@ -20,6 +20,7 @@ var _ MappedNullable = &Project{}
 // Project struct for Project
 type Project struct {
 	Build       *ProjectBuild  `json:"build,omitempty"`
+	Default     *bool          `json:"default,omitempty"`
 	Image       *string        `json:"image,omitempty"`
 	Name        *string        `json:"name,omitempty"`
 	Repository  *GitRepository `json:"repository,omitempty"`
@@ -76,6 +77,38 @@ func (o *Project) HasBuild() bool {
 // SetBuild gets a reference to the given ProjectBuild and assigns it to the Build field.
 func (o *Project) SetBuild(v ProjectBuild) {
 	o.Build = &v
+}
+
+// GetDefault returns the Default field value if set, zero value otherwise.
+func (o *Project) GetDefault() bool {
+	if o == nil || IsNil(o.Default) {
+		var ret bool
+		return ret
+	}
+	return *o.Default
+}
+
+// GetDefaultOk returns a tuple with the Default field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Project) GetDefaultOk() (*bool, bool) {
+	if o == nil || IsNil(o.Default) {
+		return nil, false
+	}
+	return o.Default, true
+}
+
+// HasDefault returns a boolean if a field has been set.
+func (o *Project) HasDefault() bool {
+	if o != nil && !IsNil(o.Default) {
+		return true
+	}
+
+	return false
+}
+
+// SetDefault gets a reference to the given bool and assigns it to the Default field.
+func (o *Project) SetDefault(v bool) {
+	o.Default = &v
 }
 
 // GetImage returns the Image field value if set, zero value otherwise.
@@ -314,6 +347,9 @@ func (o Project) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if !IsNil(o.Build) {
 		toSerialize["build"] = o.Build
+	}
+	if !IsNil(o.Default) {
+		toSerialize["default"] = o.Default
 	}
 	if !IsNil(o.Image) {
 		toSerialize["image"] = o.Image

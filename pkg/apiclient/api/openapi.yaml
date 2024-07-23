@@ -421,6 +421,99 @@ paths:
       tags:
       - profile
       x-codegen-request-body-name: profileData
+  /project-config:
+    get:
+      description: List project configs
+      operationId: ListProjectConfigs
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ProjectConfig'
+                type: array
+          description: OK
+      summary: List project configs
+      tags:
+      - project-config
+    put:
+      description: Set project config data
+      operationId: SetProjectConfig
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectConfigDTO'
+        description: Project config
+        required: true
+      responses:
+        "201":
+          content: {}
+          description: Created
+      summary: Set project config data
+      tags:
+      - project-config
+      x-codegen-request-body-name: projectConfig
+  /project-config/{configName}:
+    delete:
+      description: Delete project config data
+      operationId: DeleteProjectConfig
+      parameters:
+      - description: Config name
+        in: path
+        name: configName
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          content: {}
+          description: No Content
+      summary: Delete project config data
+      tags:
+      - project-config
+    get:
+      description: Get project config data
+      operationId: GetProjectConfig
+      parameters:
+      - description: Config name
+        in: path
+        name: configName
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProjectConfig'
+          description: OK
+      summary: Get project config data
+      tags:
+      - project-config
+  /project-config/{gitUrl}:
+    get:
+      description: Get project configs by git url
+      operationId: GetDefaultProjectConfig
+      parameters:
+      - description: Git URL
+        in: path
+        name: gitUrl
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectConfig'
+          description: OK
+      summary: Get project configs by git url
+      tags:
+      - project-config
   /provider:
     get:
       description: List providers
@@ -625,7 +718,7 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/CreateWorkspaceRequest'
+              $ref: '#/components/schemas/CreateWorkspaceDTO'
         description: Create workspace
         required: true
       responses:
@@ -827,65 +920,7 @@ components:
         username:
           type: string
       type: object
-    CreateWorkspaceRequest:
-      example:
-        projects:
-        - image: image
-          build:
-            devcontainer:
-              devContainerFilePath: devContainerFilePath
-          envVars:
-            key: envVars
-          name: name
-          source:
-            repository:
-              owner: owner
-              path: path
-              name: name
-              id: id
-              source: source
-              prNumber: 0
-              branch: branch
-              sha: sha
-              url: url
-          user: user
-        - image: image
-          build:
-            devcontainer:
-              devContainerFilePath: devContainerFilePath
-          envVars:
-            key: envVars
-          name: name
-          source:
-            repository:
-              owner: owner
-              path: path
-              name: name
-              id: id
-              source: source
-              prNumber: 0
-              branch: branch
-              sha: sha
-              url: url
-          user: user
-        name: name
-        id: id
-        target: target
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        projects:
-          items:
-            $ref: '#/components/schemas/CreateWorkspaceRequestProject'
-          type: array
-        target:
-          type: string
-      required:
-      - projects
-      type: object
-    CreateWorkspaceRequestProject:
+    CreateProjectConfigDTO:
       example:
         image: image
         build:
@@ -918,13 +953,11 @@ components:
         name:
           type: string
         source:
-          $ref: '#/components/schemas/CreateWorkspaceRequestProjectSource'
+          $ref: '#/components/schemas/CreateProjectConfigSourceDTO'
         user:
           type: string
-      required:
-      - name
       type: object
-    CreateWorkspaceRequestProjectSource:
+    CreateProjectConfigSourceDTO:
       example:
         repository:
           owner: owner
@@ -939,6 +972,119 @@ components:
       properties:
         repository:
           $ref: '#/components/schemas/GitRepository'
+      type: object
+    CreateProjectDTO:
+      example:
+        newProjectConfig:
+          image: image
+          build:
+            devcontainer:
+              devContainerFilePath: devContainerFilePath
+          envVars:
+            key: envVars
+          name: name
+          source:
+            repository:
+              owner: owner
+              path: path
+              name: name
+              id: id
+              source: source
+              prNumber: 0
+              branch: branch
+              sha: sha
+              url: url
+          user: user
+        existingProjectConfig:
+          configName: configName
+          projectName: projectName
+          branch: branch
+      properties:
+        existingProjectConfig:
+          $ref: '#/components/schemas/ExistingProjectConfigDTO'
+        newProjectConfig:
+          $ref: '#/components/schemas/CreateProjectConfigDTO'
+      type: object
+    CreateWorkspaceDTO:
+      example:
+        projects:
+        - newProjectConfig:
+            image: image
+            build:
+              devcontainer:
+                devContainerFilePath: devContainerFilePath
+            envVars:
+              key: envVars
+            name: name
+            source:
+              repository:
+                owner: owner
+                path: path
+                name: name
+                id: id
+                source: source
+                prNumber: 0
+                branch: branch
+                sha: sha
+                url: url
+            user: user
+          existingProjectConfig:
+            configName: configName
+            projectName: projectName
+            branch: branch
+        - newProjectConfig:
+            image: image
+            build:
+              devcontainer:
+                devContainerFilePath: devContainerFilePath
+            envVars:
+              key: envVars
+            name: name
+            source:
+              repository:
+                owner: owner
+                path: path
+                name: name
+                id: id
+                source: source
+                prNumber: 0
+                branch: branch
+                sha: sha
+                url: url
+            user: user
+          existingProjectConfig:
+            configName: configName
+            projectName: projectName
+            branch: branch
+        name: name
+        id: id
+        target: target
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        projects:
+          items:
+            $ref: '#/components/schemas/CreateProjectDTO'
+          type: array
+        target:
+          type: string
+      required:
+      - projects
+      type: object
+    ExistingProjectConfigDTO:
+      example:
+        configName: configName
+        projectName: projectName
+        branch: branch
+      properties:
+        branch:
+          type: string
+        configName:
+          type: string
+        projectName:
+          type: string
       type: object
     FRPSConfig:
       example:
@@ -1130,6 +1276,7 @@ components:
     Project:
       example:
         image: image
+        default: true
         build:
           devcontainer:
             devContainerFilePath: devContainerFilePath
@@ -1164,6 +1311,8 @@ components:
       properties:
         build:
           $ref: '#/components/schemas/ProjectBuild'
+        default:
+          type: boolean
         image:
           type: string
         name:
@@ -1192,6 +1341,39 @@ components:
         devContainerFilePath: devContainerFilePath
       properties:
         devContainerFilePath:
+          type: string
+      type: object
+    ProjectConfig:
+      example:
+        image: image
+        default: true
+        build:
+          devcontainer:
+            devContainerFilePath: devContainerFilePath
+        name: name
+        repository:
+          owner: owner
+          path: path
+          name: name
+          id: id
+          source: source
+          prNumber: 0
+          branch: branch
+          sha: sha
+          url: url
+        user: user
+      properties:
+        build:
+          $ref: '#/components/schemas/ProjectBuild'
+        default:
+          type: boolean
+        image:
+          type: string
+        name:
+          type: string
+        repository:
+          $ref: '#/components/schemas/GitRepository'
+        user:
           type: string
       type: object
     ProjectInfo:
@@ -1362,6 +1544,7 @@ components:
       example:
         projects:
         - image: image
+          default: true
           build:
             devcontainer:
               devContainerFilePath: devContainerFilePath
@@ -1394,6 +1577,7 @@ components:
           target: target
           workspaceId: workspaceId
         - image: image
+          default: true
           build:
             devcontainer:
               devContainerFilePath: devContainerFilePath
@@ -1444,6 +1628,7 @@ components:
       example:
         projects:
         - image: image
+          default: true
           build:
             devcontainer:
               devContainerFilePath: devContainerFilePath
@@ -1476,6 +1661,7 @@ components:
           target: target
           workspaceId: workspaceId
         - image: image
+          default: true
           build:
             devcontainer:
               devContainerFilePath: devContainerFilePath

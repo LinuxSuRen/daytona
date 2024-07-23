@@ -36,6 +36,7 @@ import (
 	"github.com/daytonaio/daytona/pkg/api/controllers/gitprovider"
 	log_controller "github.com/daytonaio/daytona/pkg/api/controllers/log"
 	"github.com/daytonaio/daytona/pkg/api/controllers/profiledata"
+	"github.com/daytonaio/daytona/pkg/api/controllers/projectconfig"
 	"github.com/daytonaio/daytona/pkg/api/controllers/provider"
 	"github.com/daytonaio/daytona/pkg/api/controllers/server"
 	"github.com/daytonaio/daytona/pkg/api/controllers/target"
@@ -121,6 +122,15 @@ func (a *ApiServer) Start() error {
 		workspaceController.DELETE("/:workspaceId", workspace.RemoveWorkspace)
 		workspaceController.POST("/:workspaceId/:projectId/start", workspace.StartProject)
 		workspaceController.POST("/:workspaceId/:projectId/stop", workspace.StopProject)
+	}
+
+	projectConfigController := protected.Group("/project-config")
+	{
+		projectConfigController.GET("/:configName", projectconfig.GetProjectConfig)
+		projectConfigController.GET("/", projectconfig.ListProjectConfigs)
+		projectConfigController.GET("/default/:gitUrl", projectconfig.GetDefaultProjectConfig)
+		projectConfigController.PUT("/", projectconfig.SetProjectConfig)
+		projectConfigController.DELETE("/:configName", projectconfig.DeleteProjectConfig)
 	}
 
 	providerController := protected.Group("/provider")

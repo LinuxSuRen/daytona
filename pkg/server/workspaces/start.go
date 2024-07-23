@@ -10,6 +10,7 @@ import (
 	"github.com/daytonaio/daytona/pkg/logs"
 	"github.com/daytonaio/daytona/pkg/provider"
 	"github.com/daytonaio/daytona/pkg/workspace"
+	"github.com/daytonaio/daytona/pkg/workspace/project"
 
 	"github.com/daytonaio/daytona/internal/util"
 )
@@ -78,18 +79,18 @@ func (s *WorkspaceService) startWorkspace(workspace *workspace.Workspace, target
 	return nil
 }
 
-func (s *WorkspaceService) startProject(project *workspace.Project, target *provider.ProviderTarget, logWriter io.Writer) error {
-	logWriter.Write([]byte(fmt.Sprintf("Starting project %s\n", project.Name)))
+func (s *WorkspaceService) startProject(p *project.Project, target *provider.ProviderTarget, logWriter io.Writer) error {
+	logWriter.Write([]byte(fmt.Sprintf("Starting project %s\n", p.Name)))
 
-	projectToStart := *project
-	projectToStart.EnvVars = workspace.GetProjectEnvVars(project, s.serverApiUrl, s.serverUrl)
+	projectToStart := *p
+	projectToStart.EnvVars = project.GetProjectEnvVars(p, s.serverApiUrl, s.serverUrl)
 
-	err := s.provisioner.StartProject(project, target)
+	err := s.provisioner.StartProject(p, target)
 	if err != nil {
 		return err
 	}
 
-	logWriter.Write([]byte(fmt.Sprintf("Project %s started\n", project.Name)))
+	logWriter.Write([]byte(fmt.Sprintf("Project %s started\n", p.Name)))
 
 	return nil
 }
