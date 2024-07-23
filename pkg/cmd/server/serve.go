@@ -69,7 +69,7 @@ var ServeCmd = &cobra.Command{
 			signal.Notify(interruptChannel, os.Interrupt)
 
 			for range interruptChannel {
-				log.Info("Shutting down2")
+				log.Info("Shutting down")
 				telemetryService.Close()
 			}
 		}()
